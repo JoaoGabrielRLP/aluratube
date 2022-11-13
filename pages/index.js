@@ -1,12 +1,28 @@
 import React from "react"
 import config from "../config.json";
 import styled from "styled-components";
-import Menu from "../src/components/Menu/Index"
-import { StyledTimeline } from "../src/components/Timeline"
-import { StyledFooter } from "../src/components/Footer"
+import Menu from "../src/components/Menu/Index";
+import { StyledTimeline } from "../src/components/Timeline";
+import { StyledFooter } from "../src/components/Footer";
+import { videoService } from "../src/services/videoService";
 
 function HomePage() {
+  const service = videoService();
   const [valorDoFiltro, setValorDoFiltro] = React.useState("");
+  const [playlists, setPlaylists] = React.useState({jogos : [] });
+
+  React.useEffect(() => { 
+      service.getAllVideos()
+        .then((dados) => {
+          const novasPlaylists = { ...playlists };
+          dados.data.forEach((video) => {
+            if (!novasPlaylists[video.playlist]) novasPlaylists[video.playlist] = [];
+            
+            novasPlaylists[video.playlist]?.push(video);
+          });
+          setPlaylists(novasPlaylists);
+        });
+  }, [])
 
   return (
     <>
